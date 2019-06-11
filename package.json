@@ -1,0 +1,14 @@
+{
+  "name": "greeter-bot",
+  "version": "1.0.0",
+  "description": "Rumi",
+  "main": "bot.js",
+  "author": "lilylefae",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "dotenv": "^8.0.0",
+    "request": "^2.88.0",
+    "winston": "^3.2.1"
+  }
+}
