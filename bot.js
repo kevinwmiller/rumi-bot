@@ -1,7 +1,6 @@
-var Discord = require('discord.io')
-var logger = require('winston')
-var axios = require('axios')
-var auth = require('./auth.json')
+let Discord = require('discord.io')
+let logger = require('winston')
+let axios = require('axios')
 const dotenv = require('dotenv');
 
 logger.remove(logger.transports.Console)
@@ -11,58 +10,66 @@ logger.add(new logger.transports.Console, {
 
 logger.level = 'debug'
 
+dotenv.config();
+
+let isLive = false
+let liveCheckMade = false
+
+let streamApiBaseUrl = `https://api.twitch.tv/kraken/streams/`
+let twitchUser = process.env.TWITCH_USER
+let twitchUserID = process.env.TWITCH_USER_ID
+let notificationChannelID = process.env.DISCORD_NOTIFICATION_CHANNEL_ID
+let twitchClientID = process.env.TWITCH_CLIENT_ID
+let discordToken = process.env.DISCORD_TOKEN
+let streamUrl = streamApiBaseUrl + twitchUserID
+let twitchUrl = `https://www.twitch.tv/${twitchUser}`
+let liveNotificationMessage = `Hey @everyone! ${twitchUser} is live! Check her out at ${twitchUrl}`
+let liveMessage = `${twitchUser} is live at ${twitchUrl}`
+let streamEndMessage = 'The stream has ended for now'
+let offlineMessage = `${twitchUser} is currently offline`
+
 // Initialize Discord Bot
-var bot = new Discord.Client({
-    token: auth.token,
+let bot = new Discord.Client({
+    token: discordToken,
     autorun: true
 })
 
-dotenv.config();
-
-var isLive = false
-
-var streamApiBaseUrl = `https://api.twitch.tv/kraken/streams/`
-var twitchUser = process.env.TWITCH_USER
-var twitchUserID = process.env.TWITCH_USER_ID
-var notificationChannelID = process.env.NOTIFICATION_CHANNEL_ID
-var twitchClientID = process.env.TWITCH_CLIENT_ID
-var streamUrl = streamApiBaseUrl + twitchUserID
-var twitchUrl = `https://www.twitch.tv/${twitchUser}`
-var liveNotificationMessage = `Hey @everyone! ${twitchUser} is live! Check her out at ${twitchUrl}`
-var liveMessage = `Hi @everyone! ${twitchUser} is live! Check her out at ${twitchUrl}`
-var streamEndMessage = `${twitchUser} is live at ${twitchUrl}`
-var offlineMessage = `${twitchUser} is currently offline`
-
 function checkLiveStatus() {
-    axios.get(
-        streamUrl,
-        {
-            params: {
-                'client_id': twitchClientID
+    if (!liveCheckMade) {
+        liveCheckMade = true
+        axios.get(
+            streamUrl,
+            {
+                params: {
+                    'client_id': twitchClientID
+                }
             }
-        }
-    )
-        .then(response => {
-            if (response.data.stream != null && !isLive) {
-                logger.info('Streamer is live')
-                bot.sendMessage({
-                    to: notificationChannelID,
-                    message: liveNotificationMessage,
-                })
-                isLive = true
-            }
-            else if (response.data.stream == null && isLive) {
-                logger.info('Streamer has gone offline')
-                bot.sendMessage({
-                    to: notificationChannelID,
-                    message: streamEndMessage,
-                })
-                isLive = false
-            }
-        })
-        .catch(error => {
-            logger.error(error);
-        })
+        )
+            .then(response => {
+                liveCheckMade = false
+
+                if (response.data.stream != null && !isLive) {
+                    logger.info('Streamer is live')
+                    bot.sendMessage({
+                        to: notificationChannelID,
+                        message: liveNotificationMessage,
+                    })
+                    isLive = true
+                }
+                else if (response.data.stream == null && isLive) {
+                    logger.info('Streamer has gone offline')
+                    bot.sendMessage({
+                        to: notificationChannelID,
+                        message: streamEndMessage,
+                    })
+                    isLive = false
+                }
+            })
+            .catch(error => {
+                liveCheckMade = false
+                logger.error(error);
+            })
+    }
 }
 
 bot.on('ready', function (evt) {
@@ -70,15 +77,15 @@ bot.on('ready', function (evt) {
     logger.info(`Logged in as: ${evt}`)
     logger.info(evt)
     logger.info(bot.username + ' - (' + bot.id + ')')
-    setInterval(checkLiveStatus, 5);
+    setInterval(checkLiveStatus, 5000);
 })
 
 bot.on('message', function (user, userID, channelID, message, evt) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (message.substring(0, 1) == '!') {
-        var args = message.substring(1).split(' ')
-        var cmd = args[0]
+        let args = message.substring(1).split(' ')
+        let cmd = args[0]
 
         args = args.splice(1)
         switch (cmd) {
