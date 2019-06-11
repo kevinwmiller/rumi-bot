@@ -5,8 +5,18 @@ A !live command is also provided to allow users to check the current status of t
 
 # Requirements
 
+## Easier Preferred Method
 - docker
 - docker-compose
+## Slightly More Annoying Method (May Need for Windows Computers if You Are Not Running a Recent Version of Windows 10)
+  - node 12
+    - If on Linux, use your distro's package manager
+    - nvm is a useful tool to manage node version
+  - If on Windows
+    - Download the current node version from https://nodejs.org/en/download/current/
+  - forever
+    - ```npm i -g forever```
+## Both Methods
 - Twitch Account
 - Discord Account
 
@@ -52,8 +62,6 @@ This value is the ID associated with your Twitch account. You can download a [br
 This value is required to check the status of the stream.
 - Go to https://dev.twitch.tv/docs/api/, and follow the Setup instructions to create a Twitch application. Copy the client ID and use it for the TWITCH_CLIENT_ID value.
 
-There is some required setup that involves creating a bot on discord. More detailed instructions for the following steps will be provided if desired.
-
 ### DICORD_TOKEN
 - Go to discordapp.com/developers/applications/me, login, and create a new discord bot
 - Go into the Bot tab on the left, and in the "Build-A-Bot" section, click "Reveal" to get your bot's authorization token. Do not share this with anyone or put it under version control.
@@ -69,4 +77,26 @@ There is some required setup that involves creating a bot on discord. More detai
 # Starting the Bot
 
 - Open a command prompt in the project root
+
+## Easier Preferred Method
 - ```docker-compose up -d```
+
+## Slightly More Annoying Method (May Need for Windows Computers if You Are Not Running a Recent Version of Windows 10)
+- ```forever start bot.js```
+
+# To Stop Rumi-Bot
+- Open a command prompt in the root of the project directory
+- If using docker:
+  - ```docker-compose stop``` if using docker-compose
+- If using forever:
+  - ```forever list``` to find the process ID
+  - ```forever stop <PID>```
+    - Alternatively, you can use ```forever stopall``` to stop all processes running with forever.
+      - If you only have the bot running, this is simpler
+
+# Ensure the Bot is Running
+- Open discord, and type ```!test``` in the chat window. The bot should respond with "Testing". If you see this message, then everything is working as expected.
+
+# Troubleshooting
+
+- If the bot is offline, ensure your Discord Token is correct. Make sure there are no quotes around the values in the .env file
