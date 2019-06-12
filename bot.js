@@ -23,7 +23,8 @@ let twitchClientID = process.env.TWITCH_CLIENT_ID
 let discordToken = process.env.DISCORD_TOKEN
 let streamUrl = streamApiBaseUrl + twitchUserID
 let twitchUrl = `https://www.twitch.tv/${twitchUser}`
-let liveNotificationMessage = `Hey @everyone! ${twitchUser} is live! Check her out at ${twitchUrl}`
+// TODO: Make these configurable, but allow environment variable expansion without using eval
+let liveNotificationMessage = `Hey @here! ${twitchUser} is live! Check her out at ${twitchUrl}`
 let liveMessage = `${twitchUser} is live at ${twitchUrl}`
 let streamEndMessage = 'The stream has ended for now'
 let offlineMessage = `${twitchUser} is currently offline`
