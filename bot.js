@@ -99,6 +99,12 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             case 'live':
                 handleLiveCmd(user, userID, channelID, message, evt)
                 break
+            case 'noods':
+                bot.sendMessage({
+                    to: channelID,
+                    message: '=3 https://imgur.com/gallery/aaMsq3t',
+                })
+                break
             // Just add any case commands if you want to..
         }
     }
